@@ -31,3 +31,47 @@ uid_date_combined_data = app_purchases.merge(customer_data, on=['uid', 'date'], 
 # Examine the results 
 print(uid_date_combined_data.head())
 print(len(uid_date_combined_data))
+
+# Group the data 
+grouped_purchase_data = purchase_data.groupby(['device', 'gender'])
+
+# Aggregate the data
+purchase_summary = grouped_purchase_data.agg({'price': ['mean', 'median', 'std']})
+
+# Examine the results
+print(purchase_summary)
+
+# Compute max_purchase_date
+max_purchase_date = current_date - timedelta(days=28)
+
+# Filter to only include users who registered before our max date
+purchase_data_filt = purchase_data[purchase_data.reg_date < max_purchase_date]
+
+# Filter to contain only purchases within the first 28 days of registration
+purchase_data_filt = purchase_data_filt[(purchase_data_filt.date <= 
+                        purchase_data_filt.reg_date + timedelta(days=28))]
+
+# Output the mean price paid per purchase
+print(purchase_data_filt.price.mean())
+
+# Parsing dates: https://strftime.org/
+
+# Week one converstion rate by day
+import pandas as pd
+from datetime import timedelta
+
+# The maximum date in our dataset
+current_date = pd.to_datetime('2018-03-17')
+
+# Limit to users who have had a week to subscribe
+max_lapse_date = current_date - timedelta (days=7)
+conv_sub_data = sub_data_demo[sub_data_demo.lapse_date < max_lapse_date]
+
+# Calculate how many days it took the user to subscribe. Lapse date is the first day a user is eligible to subscribe
+conv_sub_date['sub_time'] = (conv_sub_data.subscription_date - conv_sub_data.lapse_date.dt.days)
+
+# Find the conversion rate for each daily cohort
+conversion_data = conv_sub_data.groupby(by=['lapse_date'], as_index=False).agg({'sub_time': [gc7]})
+
+
+
