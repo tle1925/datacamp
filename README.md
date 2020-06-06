@@ -1,2 +1,0 @@
-# datacamp
-notes from class
