@@ -73,5 +73,44 @@ conv_sub_date['sub_time'] = (conv_sub_data.subscription_date - conv_sub_data.lap
 # Find the conversion rate for each daily cohort
 conversion_data = conv_sub_data.groupby(by=['lapse_date'], as_index=False).agg({'sub_time': [gc7]})
 
+# Break out our conversion rate by country, pivot data to graph time series 
+reformatted_cntry_data = pd.pivot_table(
+  conversion_data # data frame to reshape
+  values = ['sub_time'], # our primary value
+  columns = ['country], # what to break out
+  index = ['reg_date'], # the value to use as rows
+  fill_value = 0)
+ 
+reformatted_cntry_data.plot (
+  x = 'reg_date',
+  y = ['BRA', 'FRA', 'DEU', 'TUR', 'USA', 'CAN']
+)
+  
+plt.show()
 
+# Understanding trends
+# Subscribers per day
+
+# Find the days to subscribe of our loaded usa subs data set 
+usa_subscriptions['sub_day']= (usa_subscriptions.sub_date - usa_subscriptions.lapse_date).dt.days
+
+# Filter out those who subscribed in the past week
+usa_subscriptions = usa_subscriptions [usa_subscriptions.sub_day <=7]
+
+# Find the total subscribers per day
+usa_subscriptions = usa_subscriptions.groupby(by=['sub_date'], as_index = False).agg({'subs':['sum']})
+
+# plot USA subscribers per day
+usa_subscriptions.plot(x='sub_date', y='subs')
+plt.show()
+
+# Weekly seasonality: trendse following day of the week - perhaps users more likely to subscribe on weekend; seasonality can show price change?
+
+# Correcting for seasonality with trailing averages
+
+# Trailing Average: smoothing technique that averages over a lagging window
+
+# Reveal hidden trends by smoothing out seasonality
+# Average across period of seasonality
+# 7-day window to smooth weekly seasonality
 
